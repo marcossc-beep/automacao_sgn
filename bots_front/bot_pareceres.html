@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SGN - Pareceres</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .terminal { font-family: 'Fira Code', monospace; background: #0d1117; color: #d29922; height: 350px; overflow-y: auto; border: 1px solid #30363d; }
+        .log-error { color: #f85149; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        <a href="/" class="text-green-500 mb-4 inline-block">← Voltar</a>
+        <h1 class="text-2xl font-bold mb-6 text-green-700">📝 Lançador de Pareceres Automático</h1>
+        
+        <div class="bg-green-50 p-4 rounded mb-6 text-sm text-green-800">
+            <strong>Como funciona:</strong> O robô lerá a nota do aluno na tela na parte do CF (A, B ou C), vai sortear uma frase do seu banco de dados (pareceres.json) e digitará no sistema como um humano.
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <input type="text" id="user" placeholder="Usuário SGN" class="p-2 border rounded">
+            <input type="password" id="password" placeholder="Senha" class="p-2 border rounded">
+            <input type="text" id="diaryLink" placeholder="Link do Diário de Pareceres" class="p-2 border rounded col-span-2">
+        </div>
+
+        <button id="btnRun" class="w-full bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700 transition">INICIAR ROBÔ</button>
+
+        <div id="terminal" class="terminal mt-6 p-4 rounded-lg text-sm">
+            <p>> Sistema pronto. Banco de pareceres conectado.</p>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const btnRun = document.getElementById('btnRun');
+        let lastLogCount = 0;
+
+        function log(msg, type = '') {
+            const p = document.createElement('p');
+            if (type === 'error') p.className = 'log-error';
+            p.innerText = msg;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function pollStatus(jobId) {
+            const interval = setInterval(async () => {
+                const res = await fetch(`/api/status/${jobId}`);
+                const data = await res.json();
+
+                if (data.logs.length > lastLogCount) {
+                    data.logs.slice(lastLogCount).forEach(m => log(m));
+                    lastLogCount = data.logs.length;
+                }
+
+                if (data.status === 'completed' || data.status === 'error') {
+                    clearInterval(interval);
+                    btnRun.disabled = false;
+                    btnRun.innerText = 'INICIAR ROBÔ';
+                    log(`--- FIM DA EXECUÇÃO (${data.status}) ---`);
+                }
+            }, 2000);
+        }
+
+        btnRun.addEventListener('click', async () => {
+            btnRun.disabled = true;
+            btnRun.innerText = 'EXECUTANDO...';
+            lastLogCount = 0;
+            terminal.innerHTML = '<p>> Conectando ao SGN...</p>';
+
+            const body = {
+                user: document.getElementById('user').value,
+                password: document.getElementById('password').value,
+                diaryLink: document.getElementById('diaryLink').value
+            };
+
+            const res = await fetch('/api/run-pareceres', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const { jobId } = await res.json();
+            pollStatus(jobId);
+        });
+    </script>
+</body>
+</html>

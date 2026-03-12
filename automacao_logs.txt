@@ -1,0 +1,53 @@
+--- Início da Execução: 12/03/2026, 14:52:20 ---
+[14:52:20] 🚀 Iniciando Orquestrador 100% PUPPETEER - V13 (Com Verificação de Status)
+[14:52:20] [Login] Iniciando navegador...
+[14:52:21] [Login] Acessando URL inicial: https://sgn.sesisenai.org.br/pages/diarioClasse/diario-classe.html?idDiario=410821
+[14:52:23] [Login] Botão "Entrar com FIESC" detectado. Indo para o IDP...
+[14:52:31] [Login] Preenchendo usuário e senha...
+[14:52:32] [Login] Clicando em Log In e aguardando redirecionamento do IDP...
+[14:52:36] [Login] Aguardando o carregamento da interface do SGN...
+[14:52:46] ✅ Login concluído com sucesso!
+[14:52:47] Navegando para o diário...
+[14:52:52] Abrindo aba CONCEITOS...
+[14:52:57] Clicando no lápis da coluna: AV1
+[14:53:01] ✅ Modal da avaliação aberto!
+[14:53:01] 
+📄 Verificando alunos na Página 1...
+[14:53:01]    ⏭️ Pulando: Alexandre de Carvalho Bernardes (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Ayumi Iura (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Caio Pereira Santos (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Erick Henry Borges Pereira (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Filipi de Quadros (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Gabriel Bastos Luz (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Guilherme Rosa (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Guilherme Zacarias Rodrigues (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Gustavo de Miranda Bainha (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Higor Ramos de Souza Júnior (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: João Pedro Acosta da Silva (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: João Pedro Pereira Pires (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Kamila Rovani Angeli (Já possui o check de avaliado)
+[14:53:01]    ⏭️ Pulando: Kauane Retzlaff de Azevedo (Já possui o check de avaliado)
+[14:53:01]    ➡️ Avançando para a Página 2...
+[14:53:05] 
+📄 Verificando alunos na Página 2...
+[14:53:05]    ⏭️ Pulando: Kayson Caetano Gelsleichter (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Leonardo Cristiano Branco Rozar (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Leonardo Pereira da Silva (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Lorenzo Oliveira Valese (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Lucas Patrick Brustolin Dalton (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Lucas Xavier da Silveira (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Marina Espíndola Steinbach (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Mateus Eustáquio de Lima (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Nathan Campos Justen (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Nicole Cardoso Lucas (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Nilton Horst Neto (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Pedro Crispim Neri (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Pedro Liberato Tison (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Rafaella Souza Bernardo (Já possui o check de avaliado)
+[14:53:05]    ⏭️ Pulando: Rita Portela Saibro dos Santos (Já possui o check de avaliado)
+[14:53:05]    ➡️ Avançando para a Página 3...
+[14:53:08] 
+📄 Verificando alunos na Página 3...
+[14:53:09] 
+🔍 Realizando Verificação Final...
+[14:53:09] ✅ Processo finalizado!

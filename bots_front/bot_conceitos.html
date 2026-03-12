@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SGN - Conceitos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .terminal { font-family: 'Fira Code', monospace; background: #0d1117; color: #3fb950; height: 350px; overflow-y: auto; border: 1px solid #30363d; }
+        .log-error { color: #f85149; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        <a href="/" class="text-blue-500 mb-4 inline-block">← Voltar</a>
+        <br>
+        <button id="btnExample" type="button" class="bg-blue-800 hover:bg-blue-900 text-white text-sm font-semibold py-2 px-4 rounded shadow transition">EXEMPLO</button>
+       
+        <br>
+        <br>
+        <h1 class="text-2xl font-bold mb-6">Lançador de Conceitos</h1>
+
+        
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <input type="text" id="user" placeholder="Usuário SGN" class="p-2 border rounded">
+            <input type="password" id="password" placeholder="Senha" class="p-2 border rounded">
+            <input type="text" id="diaryLink" placeholder="Link do Diário" class="p-2 border rounded col-span-2">
+            <select id="avSelection" class="p-2 border rounded col-span-2">
+                <option value="AV1">AV1</option><option value="AV2">AV2</option><option value="AV3">AV3</option><option value="AV4">AV4</option><option value="AV5">AV5</option>
+            </select>
+            <textarea id="jsonData" placeholder="Cole o JSON aqui" class="p-2 border rounded col-span-2 h-32"></textarea>
+        </div>
+
+        <button id="btnRun" class="w-full bg-blue-600 text-white font-bold py-3 rounded hover:bg-blue-700 transition">INICIAR ROBÔ</button>
+
+        <div id="terminal" class="terminal mt-6 p-4 rounded-lg text-sm">
+            <p>> Aguardando comando...</p>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const btnRun = document.getElementById('btnRun');
+        let lastLogCount = 0;
+
+        function log(msg, type = '') {
+            const p = document.createElement('p');
+            if (type === 'error') p.className = 'log-error';
+            p.innerText = msg;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function pollStatus(jobId) {
+            const interval = setInterval(async () => {
+                const res = await fetch(`/api/status/${jobId}`);
+                const data = await res.json();
+
+                if (data.logs.length > lastLogCount) {
+                    data.logs.slice(lastLogCount).forEach(m => log(m));
+                    lastLogCount = data.logs.length;
+                }
+
+                if (data.status === 'completed' || data.status === 'error') {
+                    clearInterval(interval);
+                    btnRun.disabled = false;
+                    btnRun.innerText = 'INICIAR ROBÔ';
+                    log(`--- FIM DA EXECUÇÃO (${data.status}) ---`);
+                }
+            }, 2000);
+        }
+
+        btnRun.addEventListener('click', async () => {
+            btnRun.disabled = true;
+            btnRun.innerText = 'EXECUTANDO...';
+            lastLogCount = 0;
+            terminal.innerHTML = '<p>> Iniciando processo...</p>';
+
+            const body = {
+                user: document.getElementById('user').value,
+                password: document.getElementById('password').value,
+                diaryLink: document.getElementById('diaryLink').value,
+                avSelection: document.getElementById('avSelection').value,
+                jsonData: JSON.parse(document.getElementById('jsonData').value)
+            };
+
+            const res = await fetch('/api/run-conceitos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const { jobId } = await res.json();
+            pollStatus(jobId);
+        });
+
+        const btnExample = document.getElementById('btnExample'); // Pegando o botão de exemplo
+
+        // FUNÇÃO DO BOTÃO DE EXEMPLO 
+       btnExample.addEventListener('click', () => {
+        document.getElementById('user').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('diaryLink').value = 'https://sgn.sesisenai.org.br/pages/diarioClasse/diario-classe.html?idDiario=123456';
+        document.getElementById('avSelection').value = 'AV1';
+        
+        const jsonExemplo = [
+            {
+                "nome": "Alexandre de Carvalho Bernardes",
+                "conceito": "B"
+            },
+            {
+                "nome": "Ayumi Iura",
+                "conceito": "B"
+            },
+            {
+                "nome": "Caio Pereira Santos",
+                "conceito": "B"
+            },
+            {
+                "nome": "Erick Henry Borges Pereira",
+                "conceito": "B"
+            },
+            {
+                "nome": "Filipi de Quadros",
+                "conceito": "B"
+            },
+            {
+                "nome": "Gabriel Bastos Luz",
+                "conceito": "B"
+            },
+            {
+                "nome": "Guilherme Rosa",
+                "conceito": "B"
+            },
+            {
+                "nome": "Guilherme Zacarias Rodrigues",
+                "conceito": "B"
+            },
+            {
+                "nome": "Gustavo de Miranda Bainha",
+                "conceito": "B"
+            },
+            {
+                "nome": "Higor Ramos de Souza Júnior",
+                "conceito": "B"
+            },
+            {
+                "nome": "João Pedro Acosta da Silva",
+                "conceito": "B"
+            },
+            {
+                "nome": "João Pedro Pereira Pires",
+                "conceito": "B"
+            },
+            {
+                "nome": "Kamila Rovani Angeli",
+                "conceito": "B"
+            },
+            {
+                "nome": "Kauane Retzlaff de Azevedo",
+                "conceito": "A"
+            },
+            {
+                "nome": "Kayson Caetano Gelsleichter",
+                "conceito": "A"
+            },
+            {
+                "nome": "Leonardo Cristiano Branco Rozar",
+                "conceito": "B"
+            },
+            {
+                "nome": "Leonardo Pereira da Silva",
+                "conceito": "B"
+            },
+            {
+                "nome": "Lorenzo Oliveira Valese",
+                "conceito": "B"
+            },
+            {
+                "nome": "Lucas Patrick Brustolin Dalton",
+                "conceito": "B"
+            },
+            {
+                "nome": "Lucas Xavier da Silveira",
+                "conceito": "B"
+            },
+            {
+                "nome": "Marina Espíndola Steinbach",
+                "conceito": "B"
+            },
+            {
+                "nome": "Mateus Eustáquio de Lima",
+                "conceito": "B"
+            },
+            {
+                "nome": "Nathan Campos Justen",
+                "conceito": "B"
+            },
+            {
+                "nome": "Nicole Cardoso Lucas",
+                "conceito": "B"
+            },
+            {
+                "nome": "Nilton Horst Neto",
+                "conceito": "B"
+            },
+            {
+                "nome": "Pedro Crispim Neri",
+                "conceito": "B"
+            },
+            {
+                "nome": "Pedro Liberato Tison",
+                "conceito": "B"
+            },
+            {
+                "nome": "Rafaella Souza Bernardo",
+                "conceito": "B"
+            },
+            {
+                "nome": "Rita Portela Saibro dos Santos",
+                "conceito": "B"
+            }
+        ]
+        
+        document.getElementById('jsonData').value = JSON.stringify(jsonExemplo, null, 4);
+        log('ℹ️ Dados de exemplo (Formato Rápido) carregados.', 'info');
+    });
+    </script>
+</body>
+</html>
