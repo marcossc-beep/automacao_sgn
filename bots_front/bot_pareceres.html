@@ -2,87 +2,111 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SGN - Pareceres</title>
+    <title>SGN - Lançador de Pareceres</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .terminal { font-family: 'Fira Code', monospace; background: #0d1117; color: #d29922; height: 350px; overflow-y: auto; border: 1px solid #30363d; }
+        .terminal { font-family: 'Fira Code', monospace; background: #0d1117; color: #3fb950; height: 450px; overflow-y: auto; border: 1px solid #30363d; padding: 10px; border-radius: 8px; font-size: 13px; }
         .log-error { color: #f85149; }
+        .log-info { color: #58a6ff; }
     </style>
 </head>
 <body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <a href="/" class="text-green-500 mb-4 inline-block">← Voltar</a>
-        <h1 class="text-2xl font-bold mb-6 text-green-700">📝 Lançador de Pareceres Automático</h1>
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md border-t-8 border-green-600">
+        <a href="/" class="text-blue-500 hover:underline mb-4 inline-block">← Voltar ao Início</a>
         
-        <div class="bg-green-50 p-4 rounded mb-6 text-sm text-green-800">
-            <strong>Como funciona:</strong> O robô lerá a nota do aluno na tela na parte do CF (A, B ou C), vai sortear uma frase do seu banco de dados (pareceres.json) e digitará no sistema como um humano.
+        <h1 class="text-2xl font-bold mb-6 text-gray-800">📝 Lançador Automático de Pareceres</h1>
+
+        <div class="space-y-4 mb-6">
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="usuario" placeholder="Usuário SGN (ex: marcos.sc)" class="p-3 border rounded">
+                <input type="password" id="senha" placeholder="Senha" class="p-3 border rounded">
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <input type="text" id="link" placeholder="Cole o link do Diário de Classe aqui" class="col-span-2 p-3 border rounded w-full">
+                <select id="trSelection" class="p-3 border rounded w-full bg-white font-medium text-gray-700">
+                    <option value="TR1">TR1 - Primeiro Trimestre</option>
+                    <option value="TR2">TR2 - Segundo Trimestre</option>
+                    <option value="TR3" selected>TR3 - Terceiro Trimestre</option>
+                </select>
+            </div>
+            <button id="btnIniciar" onclick="iniciarRobo()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded transition-colors">
+                🚀 Iniciar Lançamento de Pareceres
+            </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <input type="text" id="user" placeholder="Usuário SGN" class="p-2 border rounded">
-            <input type="password" id="password" placeholder="Senha" class="p-2 border rounded">
-            <input type="text" id="diaryLink" placeholder="Link do Diário de Pareceres" class="p-2 border rounded col-span-2">
-        </div>
-
-        <button id="btnRun" class="w-full bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700 transition">INICIAR ROBÔ</button>
-
-        <div id="terminal" class="terminal mt-6 p-4 rounded-lg text-sm">
-            <p>> Sistema pronto. Banco de pareceres conectado.</p>
-        </div>
+        <div id="terminal" class="terminal mt-6 flex flex-col gap-1"></div>
     </div>
 
     <script>
-        const terminal = document.getElementById('terminal');
-        const btnRun = document.getElementById('btnRun');
-        let lastLogCount = 0;
+        let jobId = null;
 
-        function log(msg, type = '') {
-            const p = document.createElement('p');
-            if (type === 'error') p.className = 'log-error';
-            p.innerText = msg;
-            terminal.appendChild(p);
-            terminal.scrollTop = terminal.scrollHeight;
+        function addLogToScreen(msg) {
+            const term = document.getElementById('terminal');
+            const div = document.createElement('div');
+            div.textContent = msg;
+            if(msg.includes('❌') || msg.toLowerCase().includes('erro')) div.className = 'log-error';
+            else if(msg.includes('✅') || msg.includes('🚀')) div.className = 'log-info';
+            term.appendChild(div);
+            term.scrollTop = term.scrollHeight;
         }
 
-        async function pollStatus(jobId) {
-            const interval = setInterval(async () => {
-                const res = await fetch(`/api/status/${jobId}`);
+        async function iniciarRobo() {
+            const user = document.getElementById('usuario').value;
+            const password = document.getElementById('senha').value;
+            const diaryLink = document.getElementById('link').value;
+            const trSelection = document.getElementById('trSelection').value; // Captura a escolha do Trimestre
+
+            if (!user || !password || !diaryLink) {
+                alert('Preencha usuário, senha e o link do diário!');
+                return;
+            }
+
+            document.getElementById('btnIniciar').disabled = true;
+            document.getElementById('terminal').innerHTML = '';
+            addLogToScreen("⏳ Conectando ao servidor...");
+
+            try {
+                // Envia o trSelection junto no corpo da requisição (body)
+                const res = await fetch('http://localhost:3000/api/run-pareceres', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user, password, diaryLink, trSelection })
+                });
+
+                if (!res.ok) {
+                    throw new Error(`Erro de rede ou servidor bloqueou: ${res.status}`);
+                }
+
+                const data = await res.json();
+                jobId = data.jobId;
+                monitorarLogs();
+            } catch (error) {
+                addLogToScreen(`❌ Erro ao conectar: ${error.message}. O servidor Node (node server.js) está rodando?`);
+                document.getElementById('btnIniciar').disabled = false;
+            }
+        }
+
+        async function monitorarLogs() {
+            if (!jobId) return;
+            
+            try {
+                const res = await fetch(`http://localhost:3000/api/status/${jobId}`);
                 const data = await res.json();
 
-                if (data.logs.length > lastLogCount) {
-                    data.logs.slice(lastLogCount).forEach(m => log(m));
-                    lastLogCount = data.logs.length;
-                }
+                const term = document.getElementById('terminal');
+                term.innerHTML = ""; 
+                data.logs.forEach(addLogToScreen);
 
-                if (data.status === 'completed' || data.status === 'error') {
-                    clearInterval(interval);
-                    btnRun.disabled = false;
-                    btnRun.innerText = 'INICIAR ROBÔ';
-                    log(`--- FIM DA EXECUÇÃO (${data.status}) ---`);
+                if (data.status === 'running') {
+                    setTimeout(monitorarLogs, 2000);
+                } else {
+                    document.getElementById('btnIniciar').disabled = false;
+                    addLogToScreen("--- FIM DO PROCESSO ---");
                 }
-            }, 2000);
+            } catch (error) {
+                addLogToScreen(`❌ Erro ao buscar logs: ${error.message}`);
+            }
         }
-
-        btnRun.addEventListener('click', async () => {
-            btnRun.disabled = true;
-            btnRun.innerText = 'EXECUTANDO...';
-            lastLogCount = 0;
-            terminal.innerHTML = '<p>> Conectando ao SGN...</p>';
-
-            const body = {
-                user: document.getElementById('user').value,
-                password: document.getElementById('password').value,
-                diaryLink: document.getElementById('diaryLink').value
-            };
-
-            const res = await fetch('/api/run-pareceres', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            const { jobId } = await res.json();
-            pollStatus(jobId);
-        });
     </script>
 </body>
 </html>

@@ -32,8 +32,19 @@ export async function runConceitosAutomation({ user, password, diaryLink, avSele
   await loginBrowser.close();
 
   const browser = await puppeteer.launch({
-    headless: false,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+      headless: "new", // No Puppeteer v24+, use "new" ou true
+      args: [
+          '--no-sandbox', 
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage', 
+          '--disable-gpu',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process' // Ajuda a economizar RAM no plano free do Render
+      ],
+      // No Render, o caminho do executável pode variar. 
+      // Geralmente o script render-build.sh resolve, mas adicione:
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, 
   });
 
   const page = await browser.newPage();

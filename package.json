@@ -4,7 +4,11 @@
   "description": "Servidor de automação com Fastify e Puppeteer Stealth",
   "main": "server.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
+    "build": "npm install && npx puppeteer browsers install chrome",
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
