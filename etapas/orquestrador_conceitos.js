@@ -33,6 +33,7 @@ export async function runConceitosAutomation({ user, password, diaryLink, avSele
 
 const browser = await puppeteer.launch({
       headless: "new", 
+      executablePath: puppeteer.executablePath(), 
       args: [
           '--no-sandbox', 
           '--disable-setuid-sandbox',
@@ -42,8 +43,6 @@ const browser = await puppeteer.launch({
           '--no-zygote',
           '--single-process' 
       ],
-      // ✅ CÓDIGO CORRIGIDO:
-      executablePath: process.env.RENDER ? './chrome-bin' : null, 
   });
 
   const page = await browser.newPage();

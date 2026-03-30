@@ -16,18 +16,17 @@ export async function realizarLogin(user, password, targetUrl, addLog) {
     addLog(`[Login] Iniciando navegador...`);
     
 const browser = await puppeteer.launch({
-    headless: "new",
-    // Se estiver no Render, usa o atalho ./chrome-bin. Se estiver local, usa o padrão.
-    executablePath: process.env.RENDER ? './chrome-bin' : null, 
-    args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--no-zygote',
-        '--single-process'
-    ],
-});
+        headless: "new",
+        executablePath: puppeteer.executablePath(), 
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--no-zygote',
+            '--single-process'
+        ],
+    });
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1366, height: 768 });
