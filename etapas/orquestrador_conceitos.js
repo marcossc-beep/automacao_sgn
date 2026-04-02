@@ -37,19 +37,20 @@ export async function runConceitosAutomation({ user, password, diaryLink, avSele
 //     headless: false,
 //     args: ['--no-sandbox', '--disable-setuid-sandbox'],
 // });
+
   // --- MODO INVISÍVEL 
+// No seu login.js, substitua o bloco do puppeteer.launch por este:
 const browser = await puppeteer.launch({
-      headless: "new", 
-      args: [
-          '--no-sandbox', 
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage', 
-          '--disable-gpu',
-          '--no-first-run',
-          '--no-zygote',
-          '--single-process' 
-      ],
-  });
+    headless: "new",
+    // Esta linha abaixo resolve o problema do "não encontrado"
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, 
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+    ],
+});
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1680, height: 1050 });

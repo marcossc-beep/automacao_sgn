@@ -28,16 +28,16 @@ export async function realizarLogin(user, password, targetUrl, addLog) {
 
     // MODO INVISIVEL    
 const browser = await puppeteer.launch({
-        headless: "new",
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-gpu',
-            '--no-zygote',
-            '--single-process'
-        ],
-    });
+    headless: "new",
+    // Esta linha abaixo resolve o problema do "não encontrado"
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null, 
+    args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+    ],
+});
 
 
 
