@@ -2,6 +2,9 @@
 # Sair em caso de erro
 set -o errexit
 
+# Define a variável localmente para o processo de build
+export PUPPETEER_CACHE_DIR=/opt/render/project/src/.cache/puppeteer
+
 npm install
-# Instala o Chrome na pasta definida pela variável de ambiente
+# Força a instalação no caminho correto
 npx puppeteer browsers install chrome
