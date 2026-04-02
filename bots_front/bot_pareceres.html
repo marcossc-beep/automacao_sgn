@@ -98,7 +98,7 @@
                 data.logs.forEach(addLogToScreen);
 
                 if (data.status === 'running') {
-                    setTimeout(monitorarLogs, 2000);
+                    setTimeout(monitorarLogs, 5000);
                 } else {
                     document.getElementById('btnIniciar').disabled = false;
                     addLogToScreen("--- FIM DO PROCESSO ---");
