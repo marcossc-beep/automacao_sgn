@@ -15,6 +15,18 @@ puppeteer.use(StealthPlugin());
 export async function realizarLogin(user, password, targetUrl, addLog) {
     addLog(`[Login] Iniciando navegador...`);
     
+// MODO VISIVEL
+    // const browser = await puppeteer.launch({
+    //     headless: false, // Abre o navegador na sua tela
+    //     slowMo: 50,      // Opcional: reduz a velocidade para você conseguir acompanhar o que ele faz
+    //     args: [
+    //         '--no-sandbox',
+    //         '--disable-setuid-sandbox'
+    //     ],
+    // });
+
+
+    // MODO INVISIVEL    
 const browser = await puppeteer.launch({
         headless: "new",
         args: [
@@ -26,6 +38,8 @@ const browser = await puppeteer.launch({
             '--single-process'
         ],
     });
+
+
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1366, height: 768 });

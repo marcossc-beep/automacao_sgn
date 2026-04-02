@@ -31,6 +31,13 @@ export async function runConceitosAutomation({ user, password, diaryLink, avSele
   const sessionCookies = await loginPage.cookies();
   await loginBrowser.close();
 
+
+  // --- MODO VISÍVEL (Para ver o bot trabalhando) ---
+// const browser = await puppeteer.launch({
+//     headless: false,
+//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+// });
+  // --- MODO INVISÍVEL 
 const browser = await puppeteer.launch({
       headless: "new", 
       args: [

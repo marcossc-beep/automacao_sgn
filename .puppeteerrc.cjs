@@ -1,6 +1,9 @@
-const {join} = require('path');
+const { join } = require('path');
 
+/**
+ * @type {import("puppeteer").Configuration}
+ */
 module.exports = {
-  // Obriga o Puppeteer a instalar o Chrome dentro da pasta do projeto
+  // Força o Render a baixar o Chrome DENTRO da pasta do seu projeto
   cacheDirectory: join(__dirname, '.cache', 'puppeteer'),
-};  
+};
