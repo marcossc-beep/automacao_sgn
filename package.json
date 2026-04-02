@@ -8,7 +8,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "npm install && npx puppeteer browsers install chrome",
+    "build": "./render-build.sh",
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
